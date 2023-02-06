@@ -7,9 +7,11 @@ import java.awt.GridBagConstraints;
 
 import javax.swing.JPanel;
 
+import tetris.JSONManager;
 import tetris.Tetromino;
 import tetris.single.TetrisModel;
 
+@SuppressWarnings("serial")
 public class NextPiecePanel extends JPanel {
 	public static final GridBagConstraints constraints;
 	public Tetromino type;
@@ -29,8 +31,7 @@ public class NextPiecePanel extends JPanel {
 	}
 	
 	public void setType(String json) {
-		type = TetrisModel.getTypeFromJSON(json);
-		System.out.println("set");
+		type = JSONManager.getNextTypeFromJSON(json);
 		repaint();
 	}
 	

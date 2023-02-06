@@ -1,23 +1,17 @@
 package tetris.single;
 
+import static pajc.PAJC.ResizeTransitionTo;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
 import javax.swing.JFrame;
-
 import pajc.event.KeyListener;
-import tetris.TetrisApp;
-import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
-
-import static pajc.PAJC.ResizeTransitionTo;;
 
 public class SingleView {
 	
 	public static void apply(JFrame frame) {
 		var model = new TetrisModel();
 		var tetrisPanel = new TetrisPanel();
-		tetrisPanel.add(new BoardPanel(model), BoardPanel.constraints);
 		var controller = new Controller(model, tetrisPanel);
 		
 		
@@ -31,14 +25,8 @@ public class SingleView {
 		tetrisPanel.info_pnl.label.setText("Game Over");
 		tetrisPanel.info_pnl.button.addActionListener(e -> {
 			tetrisPanel.info_pnl.hideBoth();
-			tetrisPanel.info_pnl.menuButton.setVisible(false);
 			controller.reset();
 			controller.start();
-		});
-		tetrisPanel.info_pnl.menuButton.addActionListener(e -> {
-			frame.getContentPane().removeAll();
-			new TetrisApp(frame);
-			ResizeTransitionTo(new Dimension(500, 300), frame, () -> {});
 		});
 		
 		

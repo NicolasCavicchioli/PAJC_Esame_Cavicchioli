@@ -17,6 +17,9 @@ import tetris.server.JoinView;
 import tetris.share.ShareView;
 import tetris.single.SingleView;
 
+/**
+ * Main class that setup the starting menu layout.
+ */
 public class TetrisApp {
 	
 	private JFrame frame;

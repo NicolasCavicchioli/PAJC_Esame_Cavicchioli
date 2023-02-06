@@ -1,29 +1,28 @@
 package tetris;
 
 import java.util.function.IntConsumer;
-import function.MultiConsumer;
-import pajc.event.IEvent;
 
+import function.StringConsumer;
+import pajc.event.IEvent;
+import tetris.single.TetrisModel;
+
+/**
+ * enum with all the {@link IEvent} related to the game Tetris
+ * that the {@link TetrisModel} can trigger.
+ */
 public enum TetrisEvent implements IEvent {
-	COUNTDOWN (IntConsumer.class),
+	COUNTDOWN   (IntConsumer.class),
 	ROW_REMOVED (IntConsumer.class),
-	BOARD_CLEAR,
-	GAME_OVER,
-	REPAINT,
-	SMALL_REPAINT,
-	BIG_REPAINT,
-	JSON (MultiConsumer.OfString.class)
-	;
+	BOARD_CLEAR (Runnable.class),
+	REPAINT     (Runnable.class),
+	JSON        (StringConsumer.class),
+	GAME_OVER   (Runnable.class);
 	
 	Class<?> actionClass;
 	
 	private TetrisEvent(Class<?> k) {
 		actionClass = k;
 	}
-	private TetrisEvent() {
-		this(Runnable.class);
-	}
-	
 	
 	@Override
 	public Class<?> getActionClass() {return actionClass;}

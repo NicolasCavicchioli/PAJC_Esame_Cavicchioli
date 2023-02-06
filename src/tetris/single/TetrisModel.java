@@ -3,29 +3,28 @@ package tetris.single;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.HashSet;
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 import javax.swing.Timer;
-
 import pajc.event.IHasEvents;
 import pajc.event.MyEventHandler;
-import tetris.Assets;
-import tetris.IModel;
-import tetris.Piece;
-import tetris.TetrisEvent;
-import tetris.Tetromino;
+import tetris.*;
 
+/**
+ * The base Model of the whole game.
+ * @see TetrisEvent
+ */
 public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	
 	public static final int mapWidth=10, mapHeight=20;
-	private static final int EMPTY_CELL = 0;
+	public static final int EMPTY_CELL = 0;
 	
 	public final int[][] map = new int[mapHeight][mapWidth];
-	private final int spawnX = 5;
-	private Timer timer;
-	private final MyEventHandler<TetrisEvent> events = new MyEventHandler<>();
-	public final Piece current;
-	public final Piece next;
+	public final Piece current, next;
 	public int ghostY;
+	private final int spawnX = 5;
+	private Timer timer = new Timer(800, e->update());
+	private final MyEventHandler<TetrisEvent> events = new MyEventHandler<>();
+	private final JSONManager jsonManager = new JSONManager(this);
 	
 	@Override
 	public MyEventHandler<TetrisEvent> getEventHandler() {return events;}
@@ -34,24 +33,19 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	public TetrisModel() {
 		current = new Piece(Tetromino.random()).setX(spawnX);
 		next = new Piece(Tetromino.randomExcept(current.type));
-		timer = new Timer(800, e->update());
 		timer.setInitialDelay(400);
 		
-		
-		when(TetrisEvent.SMALL_REPAINT, () -> {
-			triggerEvent(TetrisEvent.JSON, getShortJSON());
-		 	triggerEvent(TetrisEvent.REPAINT);
-		})
-		.when(TetrisEvent.BIG_REPAINT, () -> {
-			triggerEvent(TetrisEvent.REPAINT);
-		});
+		when(TetrisEvent.REPAINT, ()->triggerEvent(TetrisEvent.JSON, toJSON()));
 		
 		updateGhost();
 	}
 	
 	
 	public void update() {
-		if (canSoftDrop()) return;
+		if (canSoftDrop()) {
+			triggerEvent(TetrisEvent.REPAINT);
+			return;
+		}
 		
 		if (isGameOver()) {
 			gameOver();
@@ -61,8 +55,6 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		lockPiece();
 		nextPiece();
 		updateGhost();
-		events.trigger(TetrisEvent.BIG_REPAINT);
-		events.trigger(TetrisEvent.REPAINT);
 		
 	}
 	
@@ -108,12 +100,13 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		}
 		
 		updateGhost();
-		triggerEvent(TetrisEvent.SMALL_REPAINT);
+		triggerEvent(TetrisEvent.REPAINT);
 	}
 	
 	private void updateGhost() {
 		ghostY = current.y;
 		while (checkIfTypeFit(current.type, current.x, ghostY+1, current.r)) ghostY+=1;
+		triggerEvent(TetrisEvent.REPAINT);
 	}
 	
 	private boolean canSoftDrop() {
@@ -127,8 +120,8 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 
 	private boolean tryRotate(int dr) {
 		return applyIfPieceFit(  0, 0, dr)
-			|| applyIfPieceFit(  0, 1, dr)// I help
-			|| applyIfPieceFit(  0, 2, dr)// I help
+			|| applyIfPieceFit(  0, 1, dr)// I
+			|| applyIfPieceFit(  0, 2, dr)// I
 			|| applyIfPieceFit(  1, 0, dr)
 			|| applyIfPieceFit( -1, 0, dr)
 			|| applyIfPieceFit(  2, 0, dr, Tetromino.I)
@@ -136,8 +129,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 			|| applyIfPieceFit(-dr, 2, dr, 1) // T SPIN
 			|| applyIfPieceFit(-dr, 1, dr, 1) // T SPIN
 			|| applyIfPieceFit( dr, 2, dr*2, 1)// JL SPIN
-			|| applyIfPieceFit(  0, 0, dr*2, 1)// L
-			;
+			|| applyIfPieceFit(  0, 0, dr*2, 1);// L
 	}
 	
 	private boolean applyIfPieceFit(int dx, int dy, int dr, Tetromino t) {
@@ -166,7 +158,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	
 	
 	private void hardDrop() {
-		if (timer.isRunning() && current.y<ghostY) timer.restart();
+		if (isRunning() && current.y<ghostY) timer.restart();
 		current.y = ghostY;
 	}
 	
@@ -210,7 +202,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		ghostY += size;
 		
 		triggerEvent(TetrisEvent.ROW_REMOVED, size);
-		triggerEvent(TetrisEvent.BIG_REPAINT);
+		triggerEvent(TetrisEvent.REPAINT);
 		if (boardClear) {
 			triggerEvent(TetrisEvent.BOARD_CLEAR);
 		}
@@ -223,7 +215,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	}
 	
 	
-	private boolean anyRow(Predicate<Integer> test) {
+	private boolean anyRow(IntPredicate test) {
 		for (int x=0; x<mapWidth; ++x) {
 			if (test.test(x)) return true;
 		}
@@ -250,12 +242,11 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		current.randomize().setX(spawnX);
 		next.randomize();
 		updateGhost();
-		triggerEvent(TetrisEvent.BIG_REPAINT);
 	}
 	
 	public void setNextPiece(Tetromino type) {
 		next.type = type;
-		triggerEvent(TetrisEvent.SMALL_REPAINT);
+		triggerEvent(TetrisEvent.REPAINT);
 	}
 	
 	public void addPartialRows(int size) {
@@ -270,12 +261,14 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		}
 		ghostY -= size;
 		while (!checkIfPieceFit(0, 0, 0)) current.y-=1;
-		triggerEvent(TetrisEvent.BIG_REPAINT);
+		triggerEvent(TetrisEvent.REPAINT);
 	}
 	
+	@Override
 	public void start() {
 		timer.start();
 	}
+	@Override
 	public void stop() {
 		timer.stop();
 	}
@@ -284,58 +277,8 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		return timer.isRunning();
 	}
 	
-	
-	public String getShortJSON() {
-		return "S.%s.g:%d.n:%s".formatted(current.toJSON(), ghostY, next.type);
-	}
-	public String getLongJSON() {
-		StringBuffer sb = new StringBuffer(getShortJSON());
-		sb.replace(0, 1, "L");
-		sb.append(".map:");
-		
-		for (int y=mapHeight-1; y>=0; --y) {
-			StringBuffer row = new StringBuffer();
-			boolean noMoreBlocks = true;
-			for (int x=mapWidth-1,v; x>=0; --x) {
-				v = map[y][x];
-				if (v!=EMPTY_CELL) noMoreBlocks = false;
-				row.append(v);
-			}
-			if (noMoreBlocks) break;
-			sb.append(row.toString());
-		}
-		
-		return sb.toString();
-	}
-	public static Object[] fromJSON(String json, Object[] out) {
-		if (out==null) {
-		    out = new Object[]{null,null,null,""};
-		}
-		var splitted = json.split("\\.");
-		
-		out[0] = splitted[1].substring(6); // current
-		out[1] = Integer.parseInt( splitted[2].substring(2) ); // ghost
-		out[2] = splitted[3].substring(2); // next
-		if (splitted[0].equals("L")) out[3] = splitted[4].substring(4); // map
-		
-		return out;
-	}
-	public static void paintFromObject(Object[] modelData, Graphics2D g) {
-		String map = (String)modelData[3];
-		String empty = EMPTY_CELL+"";
-		for (int x,y, i=0, n=map.length(); i<n; ++i) {
-			String c = map.substring(i,i+1);
-			if (c.equals(empty)) continue;
-			x = mapWidth-1 - i % mapWidth;
-			y = mapHeight-1 - i / mapWidth;
-			g.drawImage(Assets.images[Integer.parseInt(c)],
-					x, y, 1, 1, null);
-		}
-		Piece.paintPieceAndGhostFromJSON((String)modelData[0], (int)modelData[1], g);
-	}
-	
-	public static Tetromino getTypeFromJSON(String json) {
-		return Tetromino.valueOf(json.split("\\.")[3].substring(2));
+	public String toJSON() {
+		return jsonManager.toJSON();
 	}
 	
 }

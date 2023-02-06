@@ -1,7 +1,9 @@
 package tetris.server;
 
+import static pajc.PAJC.ResizeTransitionTo;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
@@ -9,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import pajc.event.KeyListener;
-import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 import tetris.share.BiModel;
 
@@ -23,7 +24,6 @@ public class HostView {
 		
 		frame.getContentPane().removeAll();
 		frame.setTitle("Tetris 2 (server)");
-		frame.setSize(32*30, 32*22);
 		frame.setLayout(new BorderLayout());
 		
 		
@@ -44,7 +44,6 @@ public class HostView {
 		
 		
 		tetrisPanel1 = new TetrisPanel();
-		tetrisPanel1.add(new BoardPanel(model.left), BoardPanel.constraints);
 		mainPanel.add(tetrisPanel1, new pajc.swing.GridBagConstraints()
 				.setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH)
@@ -52,7 +51,6 @@ public class HostView {
 		
 		
 		tetrisPanel2 = new TetrisPanel();
-		tetrisPanel2.add(new BoardPanel(model.right), BoardPanel.constraints);
 		mainPanel.add(tetrisPanel2, new pajc.swing.GridBagConstraints()
 				.setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH)
@@ -66,13 +64,14 @@ public class HostView {
 			controller.host_want_to_play_again();
 		});
 		
-		
+		tetrisPanel2.info_pnl.setLabelText("waiting player 2");
 		
 		
 		frame.requestFocus();
 		frame.setFocusable(true);
 		frame.addKeyListener(KeyListener.whenKeyPressed(controller::hostKeyPressed));
 		
+		ResizeTransitionTo(new Dimension(32*30, 32*22), frame, ()->{});
 	}
 	
 }

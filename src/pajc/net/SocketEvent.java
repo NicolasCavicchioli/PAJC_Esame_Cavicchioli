@@ -1,15 +1,20 @@
 package pajc.net;
 
-import function.MultiConsumer;
+import function.ExceptionConsumer;
+import function.StringConsumer;
 import pajc.event.IEvent;
 
+/**
+ * enum with all the {@link MySocket}-related events.
+ * @see IEvent
+ */
 public enum SocketEvent implements IEvent {
-	ILLEGAL_ARGUMENT (MultiConsumer.OfException.class),
-	UNABLE_TO_CONNECT (MultiConsumer.OfException.class),
-	CONNECTED (Runnable.class),
-	DISCONNECTED (MultiConsumer.OfException.class),
-	COMMAND_IN (MultiConsumer.OfString.class),
-	MESSAGE_IN (MultiConsumer.OfString.class);
+	ILLEGAL_ARGUMENT  (ExceptionConsumer.class),
+	UNABLE_TO_CONNECT (ExceptionConsumer.class),
+	CONNECTED         (Runnable.class),
+	DISCONNECTED      (ExceptionConsumer.class),
+	COMMAND_IN        (StringConsumer.class),
+	MESSAGE_IN        (StringConsumer.class);
 	
 	Class<?> actionClass;
 	

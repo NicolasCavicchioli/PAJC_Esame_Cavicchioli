@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import tetris.single.TetrisModel;
 
+@SuppressWarnings("serial")
 public class BoardPanel extends JPanel {
 	
 	public static final GridBagConstraints constraints;

@@ -5,6 +5,10 @@ import java.awt.Graphics2D;
 import function.IntBiConsumer;
 import function.IntBiPredicate;
 
+/**
+ * The {@code Piece} class represents a {@link Tetromino}
+ * that can change it's position an rotation over time. 
+ */
 public class Piece {
 	
 	public int x, y, r;

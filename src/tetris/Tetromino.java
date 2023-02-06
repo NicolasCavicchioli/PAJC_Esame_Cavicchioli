@@ -8,6 +8,11 @@ import function.IntBiConsumer;
 import function.IntBiPredicate;
 import static pajc.PAJC.half;
 
+/**
+ * A {@code Tetromino} is a Tetris piece formed by 4 block all with at least one side in common.
+ * <p>
+ * This enum provide all the information needed for each Tetrominoes, with some utility methods.
+ */
 public enum Tetromino {
 	I(1, 2, 8,
 	"----"

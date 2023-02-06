@@ -5,7 +5,23 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
+import tetris.single.TetrisModel;
+
+/**
+ * The main Panel to display the game, one per {@link TetrisModel}.
+ * It contains by default a {@link NextPiecePanel} and an {@link InfoPanel},
+ * and it will contain either a {@link BoardPanel} or a {@link ClientPanel} as needed.
+ * 
+ * @see NextPiecePanel
+ * @see InfoPanel
+ * @see BoardPanel
+ * @see ClientPanel
+ */
+@SuppressWarnings("serial")
 public class TetrisPanel extends JPanel {
+	
+	public final NextPiecePanel nextPiece_pnl;
+	public final InfoPanel info_pnl;
 	
 	public TetrisPanel() {
         nextPiece_pnl = new NextPiecePanel();
@@ -45,8 +61,5 @@ public class TetrisPanel extends JPanel {
         this.requestFocus();
         
 	}
-	
-	public final NextPiecePanel nextPiece_pnl;
-	public final InfoPanel info_pnl;
 	
 }

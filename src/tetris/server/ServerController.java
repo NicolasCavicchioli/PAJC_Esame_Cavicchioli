@@ -10,6 +10,7 @@ import pajc.net.SocketEvent;
 import pajc.net.TELNET;
 import tetris.TetrisEvent;
 import tetris.Tetromino;
+import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 import tetris.share.BiModel;
 import tetris.single.TetrisModel;
@@ -38,6 +39,9 @@ public class ServerController {
 		tetrisPanel1 = view.tetrisPanel1;
 		tetrisPanel2 = view.tetrisPanel2;
 		
+		tetrisPanel1.add(new BoardPanel(model.left), BoardPanel.constraints);
+		tetrisPanel2.add(new BoardPanel(model.right), BoardPanel.constraints);
+		
 		
 		model.when(TetrisEvent.GAME_OVER, () -> {
 			model.stop();
@@ -48,8 +52,7 @@ public class ServerController {
 		});
 		
 		model.left.when(TetrisEvent.JSON, view.tetrisPanel1.nextPiece_pnl::setType)
-		.when(TetrisEvent.SMALL_REPAINT, ()->model.triggerEvent(TetrisEvent.SMALL_REPAINT))
-		.when(TetrisEvent.BIG_REPAINT, ()->model.triggerEvent(TetrisEvent.BIG_REPAINT))
+		.when(TetrisEvent.REPAINT, ()->model.triggerEvent(TetrisEvent.REPAINT))
 		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.right,n))
 		.when(TetrisEvent.GAME_OVER, () -> {
 			model.triggerEvent(TetrisEvent.GAME_OVER);
@@ -59,8 +62,7 @@ public class ServerController {
 		});
 		
 		model.right.when(TetrisEvent.JSON, view.tetrisPanel2.nextPiece_pnl::setType)
-		.when(TetrisEvent.SMALL_REPAINT, ()->model.triggerEvent(TetrisEvent.SMALL_REPAINT))
-		.when(TetrisEvent.BIG_REPAINT, ()->model.triggerEvent(TetrisEvent.BIG_REPAINT))
+		.when(TetrisEvent.REPAINT, ()->model.triggerEvent(TetrisEvent.REPAINT))
 		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.left,n))
 		.when(TetrisEvent.GAME_OVER, () -> {
 			model.triggerEvent(TetrisEvent.GAME_OVER);
@@ -70,8 +72,8 @@ public class ServerController {
 		});
 		
 		
-		model.left.triggerEvent(TetrisEvent.SMALL_REPAINT);
-		model.right.triggerEvent(TetrisEvent.SMALL_REPAINT);
+		model.left.triggerEvent(TetrisEvent.REPAINT);
+		model.right.triggerEvent(TetrisEvent.REPAINT);
 		
 		
 		runServer(1234,
@@ -79,8 +81,7 @@ public class ServerController {
 			clientSocket -> {
 				
 				isClientTelnet = isClientOnline = true;
-				tetrisPanel1.info_pnl.label.setText("");
-				tetrisPanel2.info_pnl.label.setVisible(false);
+				tetrisPanel1.info_pnl.setLabelText("");
 				protocol = new MySocket();
 				
 				protocol.when(SocketEvent.MESSAGE_IN, this::onClientMessage)
@@ -132,13 +133,10 @@ public class ServerController {
 	}
 	
 	private void clientMode(BiModel model) {
-		model.when(TetrisEvent.JSON, protocol::sendMessage)
-		.when(TetrisEvent.SMALL_REPAINT, ()
-		 -> model.triggerEvent(TetrisEvent.JSON, createShortJSONMessage()))
-		.when(TetrisEvent.BIG_REPAINT, ()
-		 -> model.triggerEvent(TetrisEvent.JSON, createJSONMessage()));
+		model.when(TetrisEvent.REPAINT, ()
+		 -> sendMessageToClient(createJSONMessage()));
 		
-		model.triggerEvent(TetrisEvent.SMALL_REPAINT);
+		model.triggerEvent(TetrisEvent.REPAINT);
 		
 		if (model.isNotRunning()) {
 			startCountDown();
@@ -232,11 +230,8 @@ public class ServerController {
 		return "Running server on: %s:%d".formatted(getLocalAddress(), server.getLocalPort());
 	}
 	
-	private String createShortJSONMessage() {
-        return JSON_MESSAGE.formatted(model.right.getShortJSON(), model.left.getShortJSON());
-    }
 	private String createJSONMessage() {
-		return JSON_MESSAGE.formatted(model.right.getLongJSON(), model.left.getLongJSON());
+		return JSON_MESSAGE.formatted(model.right.toJSON(), model.left.toJSON());
 	}
 		
 }

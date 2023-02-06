@@ -4,6 +4,14 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A version of {@link Runnable} that allow to throw checked exception with 3 different way to handle them:
+ * <ol>
+ * <li>{@link #runExc()}, that rethrow the exception to the caller;</li>
+ * <li>{@link #run()}, that print the exception as a {@link LambdaException};</li>
+ * <li>{@link #tryRun()}, that will ignore the exception.</li>
+ * </ol>
+ */
 @FunctionalInterface
 public interface RunnableExc extends Runnable {
 	

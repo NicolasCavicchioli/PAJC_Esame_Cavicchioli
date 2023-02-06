@@ -5,7 +5,19 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import pajc.event.IEvent;
+import pajc.event.IHasEvents;
+import pajc.event.MyEventHandler;
 
+/**
+ * Represents an operation that accepts multiple input argument and returns no
+ * result.
+ *
+ * <p>This is a <a href="package-summary.html">functional interface</a>
+ * whose functional method is {@link #accept(Object[])}.
+ * 
+ * @see MyEventHandler
+ * @see IHasEvents
+ */
 @SuppressWarnings("unchecked")
 @FunctionalInterface
 public interface MultiConsumer {
@@ -35,9 +47,5 @@ public interface MultiConsumer {
 	static <T,U> MultiConsumer from(BiConsumer<T,U> consumer) {
 		return t->consumer.accept((T)t[0], (U)t[1]);
 	}
-	
-	
-	public static interface OfString extends Consumer<String> {}
-	public static interface OfException extends Consumer<Exception> {}
 	
 }

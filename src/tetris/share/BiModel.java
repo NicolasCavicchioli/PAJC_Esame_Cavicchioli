@@ -11,8 +11,7 @@ public class BiModel implements IModel, IHasEvents<TetrisEvent> {
 	private static final String LEFT_KEYS  = "ASDQWE";
 	private static final String RIGHT_KEYS = "JKLUIO";
 	final MyEventHandler<TetrisEvent> events = new MyEventHandler<>();
-	public final TetrisModel left;
-	public final TetrisModel right;
+	public final TetrisModel left, right;
 	
 	@Override
 	public MyEventHandler<TetrisEvent> getEventHandler() {return events;}
@@ -45,14 +44,17 @@ public class BiModel implements IModel, IHasEvents<TetrisEvent> {
 	
 	}
 	
+	@Override
 	public void reset() {
 		left.reset();
 		right.reset();
 	}
+	@Override
 	public void start() {
 		left.start();
 		right.start();
 	}
+	@Override
 	public void stop() {
 		left.stop();
 		right.stop();

@@ -18,10 +18,6 @@ import function.SupplierExc;
 
 public class PAJC implements WindowConstants {
 	
-	public static void main(String[] args) {
-		RunnableExc.of(() -> {throw new Exception();}).run();
-	}
-	
 	public static final String newLine = "\r\n";
 	
 	public static int half(int n) {return n>>1;}

@@ -14,6 +14,12 @@ import function.SupplierExc;
 import pajc.event.IHasEvents;
 import pajc.event.MyEventHandler;
 
+/**
+ * The one and only class needed to handle socket connections, both server-side and client-side.
+ * <p>
+ * It enables two programs to talk to each others!
+ * @see SocketEvent
+ */
 public class MySocket implements IHasEvents<SocketEvent> {
 	final MyEventHandler<SocketEvent> events = new MyEventHandler<>();
 	Socket socket;

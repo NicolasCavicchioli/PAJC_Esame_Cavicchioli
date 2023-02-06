@@ -8,10 +8,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 public class InfoPanel extends JPanel {
 	public static final GridBagConstraints constraints;
 	public final JLabel label;
-	public final JButton button, menuButton;
+	public final JButton button;
 	
 	static {
 		constraints = new GridBagConstraints();
@@ -31,10 +32,6 @@ public class InfoPanel extends JPanel {
         button.setVisible(false);
         this.add(button);
         
-        menuButton = new JButton("Menu");
-        menuButton.setVisible(false);
-        this.add(menuButton);
-        
 	}
 	
 	public InfoPanel hideBoth() {
@@ -49,7 +46,7 @@ public class InfoPanel extends JPanel {
 	}
 	public InfoPanel setLabelText(String text) {
 		label.setText(text);
-		label.setVisible(text.isEmpty());
+		label.setVisible(!text.isEmpty());
 		return this;
 	}
 	

@@ -6,6 +6,10 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import function.SupplierExc;
 
+/**
+ * Class containing all the data to be loaded from the Resources folder,
+ * that will be used for other classes. 
+ */
 public class Assets {
 	
 	public static final Image[] images;

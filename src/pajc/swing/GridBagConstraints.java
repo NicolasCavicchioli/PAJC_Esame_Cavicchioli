@@ -1,5 +1,10 @@
 package pajc.swing;
 
+
+/**
+ * Just a better way to create a {@link java.awt.GridBagConstraints}. 
+ */
+@SuppressWarnings("serial")
 public class GridBagConstraints extends java.awt.GridBagConstraints {
 	
 	public GridBagConstraints() {

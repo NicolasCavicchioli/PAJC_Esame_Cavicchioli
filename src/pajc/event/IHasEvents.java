@@ -2,9 +2,20 @@ package pajc.event;
 
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import function.ExceptionConsumer;
 import function.MultiConsumer;
+import function.StringConsumer;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Any class that works with events <b>should</b> implements this interface.
+ * <p>It's not required, but it makes checks on the arguments,
+ * other than make the code more readable.
+ * 
+ * @param <Event> the type of events that this object is working with.
+ * @see MyEventHandler
+ * @see MultiConsumer
+ */
 public interface IHasEvents<Event extends IEvent> {
 	
 	MyEventHandler<Event> getEventHandler();
@@ -20,12 +31,12 @@ public interface IHasEvents<Event extends IEvent> {
 		getEventHandler().registerAction(event, MultiConsumer.from(action));
 		return this;
 	}
-	default  IHasEvents<Event> when(Event event, MultiConsumer.OfString action) {
+	default  IHasEvents<Event> when(Event event, StringConsumer action) {
 		requireAssignable(event, action);
 		getEventHandler().registerAction(event, MultiConsumer.from(action));
 		return this;
 	}
-	default IHasEvents<Event> when(Event event, MultiConsumer.OfException action) {
+	default IHasEvents<Event> when(Event event, ExceptionConsumer action) {
 		requireAssignable(event, action);
 		getEventHandler().registerAction(event, MultiConsumer.from(action));
 		return this;

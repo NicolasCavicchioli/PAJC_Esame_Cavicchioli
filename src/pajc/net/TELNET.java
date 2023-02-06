@@ -5,6 +5,10 @@ import pajc.PAJC;
 import tetris.Tetromino;
 import tetris.single.TetrisModel;
 
+/**
+ * Class to handle ASCII representations of {@link TetrisModel}
+ * for TELNET connections.
+ */
 public class TELNET {
 	public enum Escape {
 		CLEAR_ALL("\u001B[2J" ),

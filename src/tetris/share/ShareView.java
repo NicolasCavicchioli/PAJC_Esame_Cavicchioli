@@ -3,9 +3,7 @@ package tetris.share;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
-
 import pajc.event.KeyListener;
-import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 
 public class ShareView {
@@ -26,14 +24,12 @@ public class ShareView {
 		
 		var tetrisPanel1 = new TetrisPanel();
 		tetrisPanel1.info_pnl.label.setVisible(true);
-		tetrisPanel1.add(new BoardPanel(model.left), BoardPanel.constraints);
 		frame.getContentPane().add(tetrisPanel1, new pajc.swing.GridBagConstraints()
 				.setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH)
 				.setGrid(1, 0));
 		
 		var tetrisPanel2 = new TetrisPanel();
-		tetrisPanel2.add(new BoardPanel(model.right), BoardPanel.constraints);
 		frame.getContentPane().add(tetrisPanel2, new pajc.swing.GridBagConstraints()
 				.setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH)

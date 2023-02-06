@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import tetris.IController;
 import tetris.TetrisEvent;
 import tetris.Tetromino;
+import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 import tetris.single.TetrisModel;
 
@@ -20,6 +21,9 @@ public class ShareController implements IController {
 	
 	public ShareController(JFrame frame, BiModel model, TetrisPanel tetrisPanel1, TetrisPanel tetrisPanel2) {
 		this.model = model;
+		
+		tetrisPanel1.add(new BoardPanel(model.left), BoardPanel.constraints);
+		tetrisPanel2.add(new BoardPanel(model.right), BoardPanel.constraints);
 		
 		model.left.when(TetrisEvent.REPAINT, ()->tetrisPanel1.repaint())
 		.when(TetrisEvent.JSON, tetrisPanel1.nextPiece_pnl::setType)
@@ -43,8 +47,8 @@ public class ShareController implements IController {
 		});
 		
 		
-		model.left.triggerEvent(TetrisEvent.SMALL_REPAINT);
-		model.right.triggerEvent(TetrisEvent.SMALL_REPAINT);
+		model.left.triggerEvent(TetrisEvent.REPAINT);
+		model.right.triggerEvent(TetrisEvent.REPAINT);
 		
 		
 		ResizeTransitionTo(new Dimension(32*34, 32*22), frame, () -> {

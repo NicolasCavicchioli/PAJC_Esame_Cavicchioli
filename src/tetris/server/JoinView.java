@@ -12,6 +12,7 @@ import pajc.event.KeyListener;
 import pajc.net.MySocket;
 import pajc.net.SocketEvent;
 import tetris.TetrisApp;
+import tetris.panel.ClientPanel;
 import tetris.panel.TetrisPanel;
 import static pajc.PAJC.ResizeTransitionTo;
 
@@ -32,16 +33,15 @@ public class JoinView {
 		int port = Integer.parseInt(ss[1]);
 		
 		MySocket socket = new MySocket();
-		socket
-		.when(SocketEvent.ILLEGAL_ARGUMENT, (Exception ex) -> {
+		socket.when(SocketEvent.ILLEGAL_ARGUMENT, (Exception ex) -> {
 			error_lbl.setText(ex.getLocalizedMessage());
+			frame.repaint();
+		}).when(SocketEvent.UNABLE_TO_CONNECT, (Exception ex) -> {
+			error_lbl.setText("Unable to reach the server, try again later");
 			frame.repaint();
 		}).when(SocketEvent.CONNECTED, () -> {
 			apply(frame, socket);
 			socket.sendMessage(ServerController.NOT_TELNET_COMMAND);
-		}).when(SocketEvent.UNABLE_TO_CONNECT, (Exception ex) -> {
-			error_lbl.setText("Unable to reach the server, try again later");
-			frame.repaint();
 		}).when(SocketEvent.DISCONNECTED, (Exception ex) -> {
 			frame.getContentPane().removeAll();
 			var app = new TetrisApp(frame); // creating instance to access fields

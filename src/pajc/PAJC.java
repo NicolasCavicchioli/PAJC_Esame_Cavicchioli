@@ -10,13 +10,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import function.ConsumerExc;
 import function.LambdaException;
 import function.RunnableExc;
 import function.SupplierExc;
 
-public class PAJC implements WindowConstants {
+public class PAJC {
 	
 	public static final String newLine = "\r\n";
 	
@@ -36,7 +35,7 @@ public class PAJC implements WindowConstants {
 		else SwingUtilities.invokeLater(task);
 	}
 	
-	public static <T> void runApp(ConsumerExc<JFrame> creator) {
+	public static void runApp(ConsumerExc<JFrame> creator) {
 		EventQueue.invokeLater(RunnableExc.of(() -> {
 			var frame = new JFrame();
 			creator.accept(frame);

@@ -1,5 +1,6 @@
 package pajc.net;
 
+import static java.util.Objects.nonNull;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,7 +9,6 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
-
 import function.RunnableExc;
 import function.SupplierExc;
 import pajc.event.IHasEvents;
@@ -21,9 +21,9 @@ import pajc.event.MyEventHandler;
  * @see SocketEvent
  */
 public class MySocket implements IHasEvents<SocketEvent> {
-	final MyEventHandler<SocketEvent> events = new MyEventHandler<>();
-	Socket socket;
-	PrintWriter out;
+	private final MyEventHandler<SocketEvent> events = new MyEventHandler<>();
+	private Socket socket;
+	private PrintWriter out;
 	private int port = -1;
 	private boolean isRunning = false;
 	
@@ -77,7 +77,7 @@ public class MySocket implements IHasEvents<SocketEvent> {
 			catch(Exception ex) {ex.printStackTrace();}
 			finally {
 				isRunning = false;
-				RunnableExc.closeMany(out, in, socket);
+				RunnableExc.closeAll(out, in, socket);
 			}
 			
 		});
@@ -100,7 +100,7 @@ public class MySocket implements IHasEvents<SocketEvent> {
 	}
 	
 	public boolean canSendMessage() {
-		return isRunning && out!=null && !socket.isOutputShutdown();
+		return isRunning && nonNull(out) && !socket.isOutputShutdown();
 	}
 	
 }

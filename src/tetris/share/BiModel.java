@@ -8,8 +8,6 @@ import tetris.single.TetrisModel;
 
 public class BiModel implements IModel, IHasEvents<TetrisEvent> {
 	
-	private static final String LEFT_KEYS  = "ASDQWE";
-	private static final String RIGHT_KEYS = "JKLUIO";
 	final MyEventHandler<TetrisEvent> events = new MyEventHandler<>();
 	public final TetrisModel left, right;
 	
@@ -23,26 +21,19 @@ public class BiModel implements IModel, IHasEvents<TetrisEvent> {
 		this.left = left;
 		this.right = right;
 		
-		left.when (TetrisEvent.GAME_OVER, this::stop);
-		right.when(TetrisEvent.GAME_OVER, this::stop);
-		left.when (TetrisEvent.REPAINT, ()->this.triggerEvent(TetrisEvent.REPAINT));
-		right.when(TetrisEvent.REPAINT, ()->this.triggerEvent(TetrisEvent.REPAINT));
+		this.when(TetrisEvent.GAME_OVER, this::stop);
+		
+		left.when(TetrisEvent.REPAINT, ()->triggerEvent(TetrisEvent.REPAINT))
+		.when(TetrisEvent.GAME_OVER, ()->triggerEvent(TetrisEvent.GAME_OVER));
+		
+		right.when(TetrisEvent.REPAINT, ()->triggerEvent(TetrisEvent.REPAINT))
+		.when(TetrisEvent.GAME_OVER, ()->triggerEvent(TetrisEvent.GAME_OVER));
 		
 	}
 	public BiModel() {
 		this(new TetrisModel(), new TetrisModel());
 	}
 	
-	
-	public void keyPressed(int keyCode) {
-		int i;
-		if ((i=RIGHT_KEYS.indexOf(keyCode)) != -1) {
-			right.keyPressed(LEFT_KEYS.charAt(i));
-		} else if (LEFT_KEYS.indexOf(keyCode) != -1) {
-			left.keyPressed(keyCode);
-		}
-	
-	}
 	
 	@Override
 	public void reset() {

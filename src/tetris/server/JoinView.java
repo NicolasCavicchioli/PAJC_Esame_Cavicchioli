@@ -95,7 +95,6 @@ public class JoinView {
 				.setGrid(2, 0));
 		
 		
-		tetrisPanel1.info_pnl.button.setText("Play Again");
 		tetrisPanel1.info_pnl.button.addActionListener(e -> {
 			socket.sendMessage(ServerController.PLAY_AGAIN_COMMAND);
 		});

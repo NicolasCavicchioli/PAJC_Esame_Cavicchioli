@@ -19,12 +19,12 @@ import static pajc.PAJC.*;
 public class ServerController {
 	public static final String PLAY_AGAIN_COMMAND = "@play again";
 	public static final String NOT_TELNET_COMMAND = "@not telnet"; 
-	public static final String JSON_SEPARATOR_REGEX = "\\.\\.";
 	public static final String WIN_MESSAGE =        "#####    Win    #####";
 	public static final String GAME_OVER_MESSAGE = "##### Game Over #####";
-	private static final String PLAY_AGAIN_MESSAGE = "type \"%s\" to play again%s"
-								.formatted(PLAY_AGAIN_COMMAND, PAJC.newLine); 
+	public static final String JSON_SEPARATOR_REGEX = "\\.\\.";
 	private static final String JSON_MESSAGE = "JSON.%s..%s";
+	private static final String PLAY_AGAIN_MESSAGE = "type \"%s\" to play again%s"
+			.formatted(PLAY_AGAIN_COMMAND, PAJC.newLine); 
 	
 	private boolean isClientTelnet, isClientOnline;
 	private boolean host_want_to_play_again, client_want_to_play_again;
@@ -44,7 +44,6 @@ public class ServerController {
 		
 		
 		model.when(TetrisEvent.GAME_OVER, () -> {
-			model.stop();
 			tetrisPanel1.info_pnl.button.setVisible(true);
 		}).when(TetrisEvent.REPAINT, () -> {
 			tetrisPanel1.repaint();
@@ -52,23 +51,19 @@ public class ServerController {
 		});
 		
 		model.left.when(TetrisEvent.JSON, view.tetrisPanel1.nextPiece_pnl::setType)
-		.when(TetrisEvent.REPAINT, ()->model.triggerEvent(TetrisEvent.REPAINT))
-		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.right,n))
+		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_opponent(model.right,n))
 		.when(TetrisEvent.GAME_OVER, () -> {
-			model.triggerEvent(TetrisEvent.GAME_OVER);
 			sendMessageToClient(WIN_MESSAGE);
-			view.tetrisPanel1.info_pnl.label.setText("Game over");
-			view.tetrisPanel2.info_pnl.label.setText("win");
+			tetrisPanel1.info_pnl.setLabelText("Game over");
+			tetrisPanel2.info_pnl.setLabelText("win");
 		});
 		
 		model.right.when(TetrisEvent.JSON, view.tetrisPanel2.nextPiece_pnl::setType)
-		.when(TetrisEvent.REPAINT, ()->model.triggerEvent(TetrisEvent.REPAINT))
-		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.left,n))
+		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_opponent(model.left,n))
 		.when(TetrisEvent.GAME_OVER, () -> {
-			model.triggerEvent(TetrisEvent.GAME_OVER);
 			sendMessageToClient(GAME_OVER_MESSAGE);
-			view.tetrisPanel2.info_pnl.label.setText("Game over");
-			view.tetrisPanel1.info_pnl.label.setText("Win");
+			tetrisPanel1.info_pnl.setLabelText("Win");
+			tetrisPanel2.info_pnl.setLabelText("Game over");
 		});
 		
 		
@@ -79,9 +74,13 @@ public class ServerController {
 		runServer(1234,
 			serverSocket -> view.address_lbl.setText(setAddressLabel(serverSocket)),
 			clientSocket -> {
+				if (isClientOnline) { // there is already a connected player2
+					clientSocket.close();
+					return;
+				}
 				
 				isClientTelnet = isClientOnline = true;
-				tetrisPanel1.info_pnl.setLabelText("");
+				tetrisPanel2.info_pnl.setLabelText("");
 				protocol = new MySocket();
 				
 				protocol.when(SocketEvent.MESSAGE_IN, this::onClientMessage)
@@ -91,8 +90,7 @@ public class ServerController {
 				protocol.connectTo(clientSocket);
 				
 				
-				TimeUnit.MILLISECONDS.sleep(50);
-				
+				TimeUnit.MILLISECONDS.sleep(50); // wait for NOT_TELNET_COMMAND to arrive
 				if (isClientTelnet) telnetMode();
 				else clientMode(model);
 				
@@ -160,7 +158,7 @@ public class ServerController {
 	}
 	
 	
-	private void what_to_do_to_punish_the_oppponent(TetrisModel victim, int n) {
+	private void what_to_do_to_punish_the_opponent(TetrisModel victim, int n) {
 		if (n<4) victim.addPartialRows(n);
 		else victim.setNextPiece(Tetromino.AMONGUS);
 	}
@@ -177,8 +175,7 @@ public class ServerController {
 			isClientTelnet = false;
 		} else if (command.equals(PLAY_AGAIN_COMMAND)) {
 			client_want_to_play_again = true;
-			tetrisPanel2.info_pnl.label.setVisible(true);
-			tetrisPanel2.info_pnl.label.setText("player want to play again");
+			tetrisPanel2.info_pnl.setLabelText("player want to play again");
 			onPlayAgain();
 		}
 	}
@@ -187,9 +184,8 @@ public class ServerController {
 		RunnableExc.tryInterrupt(countDownThread);
 		model.stop();
 		isClientOnline = false;
-		tetrisPanel2.info_pnl.label.setVisible(true);
-		tetrisPanel2.info_pnl.label.setText("player 2 is offline");
 		tetrisPanel1.info_pnl.label.setVisible(false);
+		tetrisPanel2.info_pnl.setLabelText("player 2 is offline");
 		tetrisPanel2.repaint();
 	}
 	
@@ -208,9 +204,8 @@ public class ServerController {
 	
 	public void startCountDown() {
 		if (!isClientOnline) return;
+		tetrisPanel1.info_pnl.setLabelText("");
 		tetrisPanel1.info_pnl.button.setVisible(false);
-		tetrisPanel1.info_pnl.label.setText("");
-		tetrisPanel1.info_pnl.label.setVisible(true);
 		
 		countDownThread = startCoundDown(3, t -> {
 			sendMessageToClient(t+"");

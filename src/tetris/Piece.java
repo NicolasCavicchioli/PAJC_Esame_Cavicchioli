@@ -19,7 +19,7 @@ public class Piece {
 	}
 	
 	public Piece randomize() {
-		setType(Tetromino.randomExcept(type));
+		setType(Tetromino.randomExcept(this.type));
 		return this;
 	}
 	public Piece setX(int x) {
@@ -57,7 +57,7 @@ public class Piece {
 	public void forEachBlock(IntBiConsumer action) {
 		type.forEachBlock(x, y, r, action);
 	}
-	public boolean any(IntBiPredicate test) {
+	public boolean anyBlock(IntBiPredicate test) {
 		return type.anyBlock(x, y, r, test);
 	}
 	

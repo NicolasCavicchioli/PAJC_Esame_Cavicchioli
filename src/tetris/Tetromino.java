@@ -53,10 +53,10 @@ public enum Tetromino {
 	private static HashMap<Integer,Tetromino> imageIndexToType = new HashMap<>();
 	private static final float[] weights;
 	
-	public final String display;
+	
 	public final int size, maxRotate, imageIndex;
-	private Point[] relPos;
 	private final float weight;
+	private Point[] relPos;
 	
 	
 	static {
@@ -79,26 +79,26 @@ public enum Tetromino {
 	}
 	
 	
-	private Tetromino(float w, int mr, int i, String d) {
+	private Tetromino(float w, int mr, int i, String display) {
 		imageIndex = i;
 		maxRotate = mr;
-		display = d;
 		weight = w;
 		size = sqrt(display.length());
-		relPos = calcRelPos();
+		relPos = getRelPos(display);
 	}
 	
 	private int sqrt(int n) {
 		return n==4? 2 : n==9 ? 3 : 4;
 	}
 	
-	private Point[] calcRelPos() {
+	private Point[] getRelPos(String display) {
 		ArrayList<Point> points = new ArrayList<>(4);
 		for (int i=0; i<display.length(); ++i) {
 			if (display.charAt(i)=='X') {
 				points.add(new Point(i%size, i/size));
 			}
 		}
+		if (points.isEmpty()) throw new IllegalArgumentException("Tetromino %s has no blocks".formatted(this));
 		return points.toArray(Point[]::new);
 	}
 	
@@ -125,13 +125,14 @@ public enum Tetromino {
 	}
 	
 	public void show(int x, int y, int r, Graphics2D g) {
-		forEachBlock(x,y,r, (u,v) -> { 
-			g.drawImage(Assets.images[imageIndex], u, v, 1, 1, null);
-		});
+		show(x, y, r, imageIndex, g);
 	}
 	public void showGhost(int x, int y, int r, Graphics2D g) {
+		show(x, y, r, ghostImageIndex, g);
+	}
+	private void show(int x, int y, int r, int i, Graphics2D g) {
 		forEachBlock(x,y,r, (u,v) -> { 
-			g.drawImage(Assets.images[ghostImageIndex], u, v, 1, 1, null);
+			g.drawImage(Assets.images[i], u, v, 1, 1, null);
 		});
 	}
 	

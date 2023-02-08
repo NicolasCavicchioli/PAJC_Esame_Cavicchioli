@@ -1,12 +1,12 @@
 package tetris.panel;
 
+import static java.util.Objects.isNull;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import pajc.PAJC;
 import tetris.JSONManager;
-import tetris.Tetromino;
 import tetris.single.TetrisModel;
 
 @SuppressWarnings("serial")
@@ -24,7 +24,7 @@ public class ClientPanel extends JPanel {
 	
 	public void onMessageReceived(String json) {
 		gameState = JSONManager.fromJSON(json, gameState);
-		nextPiece_pnl.type = Tetromino.valueOf((String)gameState[2]);
+		nextPiece_pnl.type = JSONManager.getNextTypeFromData(gameState);
 		
 		PAJC.runInPaintThread(() -> {
 			repaint();
@@ -39,7 +39,7 @@ public class ClientPanel extends JPanel {
 		Graphics2D g2 = (Graphics2D)g;
 		TetrisModel.scale(g2);
 		TetrisModel.showBackground(g2);
-		if (gameState==null) return;
+		if (isNull(gameState)) return;
 		JSONManager.paintFromObject(gameState, g2);
 	}
 	

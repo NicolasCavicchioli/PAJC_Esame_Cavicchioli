@@ -16,8 +16,8 @@ import tetris.panel.TetrisPanel;
 import tetris.single.TetrisModel;
 
 public class ShareController implements IController {
-	
-	BiModel model;
+	private static final String LEFT_KEYS="ASDQWE", RIGHT_KEYS="JKLUIO";
+	private BiModel model;
 	
 	public ShareController(JFrame frame, BiModel model, TetrisPanel tetrisPanel1, TetrisPanel tetrisPanel2) {
 		this.model = model;
@@ -27,8 +27,8 @@ public class ShareController implements IController {
 		
 		model.left.when(TetrisEvent.REPAINT, ()->tetrisPanel1.repaint())
 		.when(TetrisEvent.JSON, tetrisPanel1.nextPiece_pnl::setType)
-		.when(TetrisEvent.BOARD_CLEAR, () ->model.right.triggerEvent(TetrisEvent.GAME_OVER))
-		.when (TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.right,n))
+		.when(TetrisEvent.BOARD_CLEAR, ()->model.right.triggerEvent(TetrisEvent.GAME_OVER))
+		.when (TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_opponent(model.right,n))
 		.when(TetrisEvent.GAME_OVER, ()->{
 			tetrisPanel1.info_pnl.setLabelText("Game Over");
 			tetrisPanel1.info_pnl.button.setVisible(true);
@@ -38,8 +38,8 @@ public class ShareController implements IController {
 		
 		model.right.when(TetrisEvent.REPAINT, ()->tetrisPanel2.repaint())
 		.when(TetrisEvent.JSON, tetrisPanel2.nextPiece_pnl::setType)
-		.when(TetrisEvent.BOARD_CLEAR, () ->model.left.triggerEvent(TetrisEvent.GAME_OVER))
-		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_oppponent(model.left,n))
+		.when(TetrisEvent.BOARD_CLEAR, ()->model.left.triggerEvent(TetrisEvent.GAME_OVER))
+		.when(TetrisEvent.ROW_REMOVED, (int n)->what_to_do_to_punish_the_opponent(model.left,n))
 		.when(TetrisEvent.GAME_OVER, ()->{
 			tetrisPanel2.info_pnl.setLabelText("Game Over");
 			tetrisPanel2.info_pnl.button.setVisible(true);
@@ -65,11 +65,7 @@ public class ShareController implements IController {
 		
 	}
 	
-	public void keyPressed(int keyCode) {
-		model.keyPressed(keyCode);
-	}
-	
-	protected void what_to_do_to_punish_the_oppponent(TetrisModel victim, int n) {
+	private void what_to_do_to_punish_the_opponent(TetrisModel victim, int n) {
 		if (n<4) victim.addPartialRows(n);
 		else victim.setNextPiece(Tetromino.AMONGUS);
 	}
@@ -78,10 +74,20 @@ public class ShareController implements IController {
 	public void reset() {
 		model.reset();
 	}
-
 	@Override
 	public void start() {
 		model.start();
+	}
+	@Override
+	public void keyPressed(int keyCode) {
+		int i;
+		
+		if ((i=RIGHT_KEYS.indexOf(keyCode)) != -1) {
+			model.right.keyPressed(LEFT_KEYS.charAt(i));
+		} else if (LEFT_KEYS.indexOf(keyCode) != -1) {
+			model.left.keyPressed(keyCode);
+		}
+		
 	}
 	
 }

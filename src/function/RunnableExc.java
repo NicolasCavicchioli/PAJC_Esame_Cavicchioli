@@ -37,12 +37,12 @@ public interface RunnableExc extends Runnable {
 	static RunnableExc of(RunnableExc runnable) {
 		return runnable;
 	}
-	static RunnableExc ignoreAll(RunnableExc runnable) {
+	static RunnableExc ignore(RunnableExc runnable) {
 		return runnable::tryRun;
 	}
 	
 	
-	static void closeMany(AutoCloseable...autoCloseables) {
+	static void closeAll(AutoCloseable...autoCloseables) {
 		for (var ac : autoCloseables) {
 			close(ac);
 		}
@@ -73,7 +73,7 @@ public interface RunnableExc extends Runnable {
 	}
 	
 	static Thread doAfter(int delay, RunnableExc action) {
-		return thread(ignoreAll(() -> {
+		return thread(ignore(() -> {
 			TimeUnit.MILLISECONDS.sleep(delay);
 			action.runExc();
 		}));

@@ -59,7 +59,6 @@ public class HostView {
 		var controller = new ServerController(model, this);
 		
 		
-		tetrisPanel1.info_pnl.button.setText("Play Again");
 		tetrisPanel1.info_pnl.button.addActionListener(e -> {
 			controller.host_want_to_play_again();
 		});

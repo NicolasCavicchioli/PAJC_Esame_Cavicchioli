@@ -23,12 +23,12 @@ public class InfoPanel extends JPanel {
 	InfoPanel() {
         this.setLayout(new GridLayout(2, 1));
         
-        label = new JLabel("");
+        label = new JLabel();
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVisible(false);
         this.add(label);
         
-        button = new JButton("Try again");
+        button = new JButton("Play again");
         button.setVisible(false);
         this.add(button);
         

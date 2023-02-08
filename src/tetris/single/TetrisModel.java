@@ -100,7 +100,6 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		}
 		
 		updateGhost();
-		triggerEvent(TetrisEvent.REPAINT);
 	}
 	
 	private void updateGhost() {
@@ -115,7 +114,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	
 	private boolean isGameOver() {
 		return !checkIfPieceFit(0, 0, 0)
-			|| current.any((int x, int y)->y<2);
+			|| current.anyBlock((int x, int y)->y<2);
 	}
 
 	private boolean tryRotate(int dr) {
@@ -181,7 +180,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		int[] maxFullRows = new int[1];
 		
 		set.removeIf(y -> {
-			if (anyRow(x -> map[y][x]==EMPTY_CELL)) return true;
+			if (anyColumn(x -> map[y][x]==EMPTY_CELL)) return true;
 			if (y>maxFullRows[0]) maxFullRows[0]=y;
 			return false;
 		});
@@ -215,7 +214,7 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	}
 	
 	
-	private boolean anyRow(IntPredicate test) {
+	private boolean anyColumn(IntPredicate test) {
 		for (int x=0; x<mapWidth; ++x) {
 			if (test.test(x)) return true;
 		}

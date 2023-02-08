@@ -26,8 +26,8 @@ public class NextPiecePanel extends JPanel {
 	
 	NextPiecePanel() {
 		setBackground(Color.ORANGE);
-        setLayout(null);
-        
+		setLayout(null);
+		
 	}
 	
 	public void setType(String json) {

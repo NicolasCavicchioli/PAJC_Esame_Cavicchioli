@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import javax.swing.JPanel;
-
 import tetris.single.TetrisModel;
 
 @SuppressWarnings("serial")

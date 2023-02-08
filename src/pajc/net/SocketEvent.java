@@ -6,6 +6,7 @@ import pajc.event.IEvent;
 
 /**
  * enum with all the {@link MySocket}-related events.
+ * 
  * @see IEvent
  */
 public enum SocketEvent implements IEvent {

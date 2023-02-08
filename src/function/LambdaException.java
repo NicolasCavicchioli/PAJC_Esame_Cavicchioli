@@ -1,7 +1,7 @@
 package function;
 
 /**
- * Exception thrown by {@link RunnableExc}, {@link ConsumerExc} or {@link SupplierExc}
+ * Exception used by {@link RunnableExc}, {@link ConsumerExc} or {@link SupplierExc}
  * to indicate that some lambda expression of those types is not working properly.
  */
 public class LambdaException extends RuntimeException {

@@ -9,6 +9,10 @@ import pajc.PAJC;
 import tetris.JSONManager;
 import tetris.single.TetrisModel;
 
+/**
+ * Panel to display a {@link TetrisModel} from a json representation of it.
+ * @see JSONManager
+ */
 @SuppressWarnings("serial")
 public class ClientPanel extends JPanel {
 	

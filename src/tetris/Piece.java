@@ -54,9 +54,24 @@ public class Piece {
 		if (dr!=0) r=getRotated(dr);
 	}
 	
+	/**
+	 * Apply the specified action for each block of this type
+	 * with this position and rotation.
+	 * 
+	 * @param action the action to be performed for each block
+	 */
 	public void forEachBlock(IntBiConsumer action) {
 		type.forEachBlock(x, y, r, action);
 	}
+	/**
+	 * Return whether any blocks of this type with this
+	 * position and rotation verifies the specified predicate.
+	 * 
+	 * @param test the predicate to be verified
+	 * @return {@code true} if any block of this type in this
+	 *         position and rotation verifies the specified
+	 *         predicate, {@code false} otherwise
+	 */
 	public boolean anyBlock(IntBiPredicate test) {
 		return type.anyBlock(x, y, r, test);
 	}
@@ -67,10 +82,23 @@ public class Piece {
 		rotate(dr);
 	}
 	
+	/**
+	 * Return a JSON-like {@code String} representing this {@code Piece}.
+	 * 
+	 * @return a JSON-like {@code String} representing this {@code Piece}
+	 */
 	public String toJSON() {
 		return "Piece:{,%s,%d,%d,%d,}".formatted(type, x, y, r);
 	}
 	
+	/**
+	 * Extract and return the data stored in the specified JSON-link
+	 * {@code String} that represent a {@code Piece}
+	 * 
+	 * @param json the JSON-link {@code String} representing a {@code Piece}
+	 * @param out where to store the extracted data, if already created
+	 * @return the extracted data
+	 */
 	public static Object[] fromJSON(String json, Object[] out) {
 		if (out==null) out = new Object[4];
 		var ss = json.split(",");

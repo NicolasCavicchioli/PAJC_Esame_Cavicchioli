@@ -15,6 +15,9 @@ import function.LambdaException;
 import function.RunnableExc;
 import function.SupplierExc;
 
+/**
+ * Utility class for generic methods.
+ */
 public class PAJC {
 	
 	public static final String newLine = "\r\n";
@@ -22,6 +25,17 @@ public class PAJC {
 	public static int half(int n) {return n>>1;}
 	public static double lerp(double a, double b, double t) {return a + t*(b-a);}
 	
+	/**
+	 * Returns the value to which the specified key is mapped in the specified map,
+     * in none a new one is being create, returned and associated with the specified key.
+	 * 
+	 * @param <K> the type of keys maintained by this map
+	 * @param <V> the type of mapped values
+	 * @param map the {@link Map} to consider
+	 * @param key the key whose associated value is to be returned
+	 * @param defaultValue the constructor for a new {@code V} value
+	 * @return the value to which the specified key is mapped in the specified map
+	 */
 	public static <K,V> V getOrPutDefault(Map<K,V> map, K key, Supplier<V> defaultValue) {
 		return map.computeIfAbsent(key, k->defaultValue.get());
 	}
@@ -56,8 +70,8 @@ public class PAJC {
 	}
 	
 	
-	public static void ResizeTransitionTo(Dimension to, JFrame frame, RunnableExc onEnd) {
-		RunnableExc.thread(()->{
+	public static Thread ResizeTransitionTo(Dimension to, JFrame frame, RunnableExc onEnd) {
+		return RunnableExc.thread(()->{
 			Dimension from = frame.getSize();
 			for (float t=0; t<=1.01; t+=0.1) {
 				float t_ = t;

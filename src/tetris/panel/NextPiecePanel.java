@@ -11,6 +11,9 @@ import tetris.JSONManager;
 import tetris.Tetromino;
 import tetris.single.TetrisModel;
 
+/**
+ * Panel to display the next {@link Tetromino}.
+ */
 @SuppressWarnings("serial")
 public class NextPiecePanel extends JPanel {
 	public static final GridBagConstraints constraints;

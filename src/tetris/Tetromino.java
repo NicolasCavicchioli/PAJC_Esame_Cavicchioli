@@ -1,17 +1,16 @@
 package tetris;
 
+import static pajc.PAJC.half;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import function.IntBiConsumer;
 import function.IntBiPredicate;
-import static pajc.PAJC.half;
 
 /**
  * A {@code Tetromino} is a Tetris piece formed by 4 block all with at least one side in common.
- * <p>
- * This enum provide all the information needed for each Tetrominoes, with some utility methods.
+ * 
+ * <p>This enum provide all the information needed for each Tetrominoes, with some utility methods.
  */
 public enum Tetromino {
 	I(1, 2, 8,
@@ -56,7 +55,7 @@ public enum Tetromino {
 	
 	public final int size, maxRotate, imageIndex;
 	private final float weight;
-	private Point[] relPos;
+	private Point[] blockPos;
 	
 	
 	static {
@@ -84,14 +83,14 @@ public enum Tetromino {
 		maxRotate = mr;
 		weight = w;
 		size = sqrt(display.length());
-		relPos = getRelPos(display);
+		blockPos = getBlockPos(display);
 	}
 	
 	private int sqrt(int n) {
 		return n==4? 2 : n==9 ? 3 : 4;
 	}
 	
-	private Point[] getRelPos(String display) {
+	private Point[] getBlockPos(String display) {
 		ArrayList<Point> points = new ArrayList<>(4);
 		for (int i=0; i<display.length(); ++i) {
 			if (display.charAt(i)=='X') {
@@ -103,23 +102,42 @@ public enum Tetromino {
 	}
 	
 	
+    /**
+     * Returns whether any blocks of the Tetromino with the specified
+     * position and rotation verifies the provided predicate.
+	 * 
+	 * @param x the horizontal position of the Tetromino
+	 * @param y the vertical position of the Tetromino
+	 * @param r the rotation of the Tetromino
+	 * @param test the predicate to verify
+	 * @return {@code true} if any blocks verifies the provided predicate, otherwise {@code false}
+	 */
 	public boolean anyBlock(int x, int y, int r, IntBiPredicate test) {
 		Point p = new Point(0,0);
 		x -= half(size); // shift from center to upper-left corner
 		y -= half(size);
-		for (int i=0; i<relPos.length; ++i) {
-			rotate(relPos[i], r, p);
+		for (int i=0; i<blockPos.length; ++i) {
+			rotate(blockPos[i], r, p);
 			if (test.test(p.x+x, p.y+y)) return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * Iterate over each position of the blocks of the Tetromino with the specified
+	 * position and rotation.
+	 * 
+	 * @param x the horizontal position of the Tetromino
+	 * @param y the vertical position of the Tetromino
+	 * @param r the rotation of the Tetromino
+	 * @param action consumer invoked with the position of the block of the Tetromino
+	 */
 	public void forEachBlock(int x, int y, int r, IntBiConsumer action) {
 		Point p = new Point(0,0);
 		x -= half(size); // shift from center to upper-left corner
 		y -= half(size);
-		for (int i=0; i<relPos.length; ++i) {
-			rotate(relPos[i], r, p);
+		for (int i=0; i<blockPos.length; ++i) {
+			rotate(blockPos[i], r, p);
 			action.accept(p.x+x, p.y+y);
 		}
 	}

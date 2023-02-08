@@ -1,11 +1,11 @@
 package pajc.event;
 
+import static java.util.Objects.requireNonNull;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import function.ExceptionConsumer;
 import function.MultiConsumer;
 import function.StringConsumer;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Any class that works with events <b>should</b> implements this interface.

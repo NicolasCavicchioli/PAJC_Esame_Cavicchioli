@@ -1,5 +1,6 @@
 package tetris.server;
 
+import static java.util.Objects.nonNull;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 import function.MultiConsumer;
@@ -14,19 +15,25 @@ import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 import tetris.share.BiModel;
 import tetris.single.TetrisModel;
-import static pajc.PAJC.*;
 
+/**
+ * Controller for the Multiplayer mode.
+ * 
+ * @see BiModel
+ * @see HostView
+ * @see JoinView
+ */
 public class ServerController {
 	public static final String PLAY_AGAIN_COMMAND = "@play again";
 	public static final String NOT_TELNET_COMMAND = "@not telnet"; 
-	public static final String WIN_MESSAGE =        "#####    Win    #####";
+	public static final String WIN_MESSAGE =		"#####	Win	#####";
 	public static final String GAME_OVER_MESSAGE = "##### Game Over #####";
 	public static final String JSON_SEPARATOR_REGEX = "\\.\\.";
 	private static final String JSON_MESSAGE = "JSON.%s..%s";
 	private static final String PLAY_AGAIN_MESSAGE = "type \"%s\" to play again%s"
 			.formatted(PLAY_AGAIN_COMMAND, PAJC.newLine); 
 	
-	private boolean isClientTelnet, isClientOnline;
+	private boolean isClientTelnet, isClientOnline, isGameOver;
 	private boolean host_want_to_play_again, client_want_to_play_again;
 	private BiModel model;
 	private TetrisPanel tetrisPanel1, tetrisPanel2;
@@ -45,6 +52,7 @@ public class ServerController {
 		
 		model.when(TetrisEvent.GAME_OVER, () -> {
 			tetrisPanel1.info_pnl.button.setVisible(true);
+			isGameOver = true;
 		}).when(TetrisEvent.REPAINT, () -> {
 			tetrisPanel1.repaint();
 			tetrisPanel2.repaint();
@@ -71,7 +79,7 @@ public class ServerController {
 		model.right.triggerEvent(TetrisEvent.REPAINT);
 		
 		
-		runServer(1234,
+		PAJC.runServer(1234,
 			serverSocket -> view.address_lbl.setText(setAddressLabel(serverSocket)),
 			clientSocket -> {
 				if (isClientOnline) { // there is already a connected player2
@@ -79,6 +87,7 @@ public class ServerController {
 					return;
 				}
 				
+				if (isGameOver) model.reset();
 				isClientTelnet = isClientOnline = true;
 				tetrisPanel2.info_pnl.setLabelText("");
 				protocol = new MySocket();
@@ -90,7 +99,7 @@ public class ServerController {
 				protocol.connectTo(clientSocket);
 				
 				
-				TimeUnit.MILLISECONDS.sleep(50); // wait for NOT_TELNET_COMMAND to arrive
+				TimeUnit.MILLISECONDS.sleep(100); // wait for NOT_TELNET_COMMAND to arrive
 				if (isClientTelnet) telnetMode();
 				else clientMode(model);
 				
@@ -115,11 +124,11 @@ public class ServerController {
 		});
 		
 		protocol.getEventHandler().registerAction(SocketEvent.MESSAGE_IN,
-	        MultiConsumer.from((String msg)->{
-	        	RunnableExc.tryInterrupt(typewritterThread);
-	        	startCountDown();
-	        	tetrisPanel2.info_pnl.label.setVisible(false);
-	        }).doOnce()
+			MultiConsumer.from((String msg)->{
+				RunnableExc.tryInterrupt(typewritterThread);
+				startCountDown();
+				tetrisPanel2.info_pnl.label.setVisible(false);
+			}).doOnce()
 		);
 		
 		
@@ -175,7 +184,7 @@ public class ServerController {
 			isClientTelnet = false;
 		} else if (command.equals(PLAY_AGAIN_COMMAND)) {
 			client_want_to_play_again = true;
-			tetrisPanel2.info_pnl.setLabelText("player want to play again");
+			tetrisPanel2.info_pnl.setLabelText("player is ready");
 			onPlayAgain();
 		}
 	}
@@ -185,7 +194,7 @@ public class ServerController {
 		model.stop();
 		isClientOnline = false;
 		tetrisPanel1.info_pnl.label.setVisible(false);
-		tetrisPanel2.info_pnl.setLabelText("player 2 is offline");
+		tetrisPanel2.info_pnl.setLabelText("player is offline");
 		tetrisPanel2.repaint();
 	}
 	
@@ -193,13 +202,14 @@ public class ServerController {
 		if (host_want_to_play_again && client_want_to_play_again) {
 			host_want_to_play_again = client_want_to_play_again = false;
 			model.reset();
+			isGameOver = false;
 			tetrisPanel2.info_pnl.label.setVisible(false);
 			startCountDown();
 		}
 	}
 	
 	private void sendMessageToClient(String msg) {
-		protocol.sendMessage(msg);
+		if (nonNull(protocol)) protocol.sendMessage(msg);
 	}
 	
 	public void startCountDown() {
@@ -207,13 +217,13 @@ public class ServerController {
 		tetrisPanel1.info_pnl.setLabelText("");
 		tetrisPanel1.info_pnl.button.setVisible(false);
 		
-		countDownThread = startCoundDown(3, t -> {
+		countDownThread = PAJC.startCoundDown(3, t -> {
 			sendMessageToClient(t+"");
-			tetrisPanel1.info_pnl.label.setText(t+"");
+			tetrisPanel1.info_pnl.setLabelText(t+"");
 			tetrisPanel1.info_pnl.repaint();
 		}, () -> {
 			sendMessageToClient("start");
-			tetrisPanel1.info_pnl.label.setText("start");
+			tetrisPanel1.info_pnl.setLabelText("start");
 			tetrisPanel1.info_pnl.repaint();
 			model.start();
 			TimeUnit.SECONDS.sleep(1);
@@ -222,11 +232,11 @@ public class ServerController {
 	}
 	
 	private static String setAddressLabel(ServerSocket server) {
-		return "Running server on: %s:%d".formatted(getLocalAddress(), server.getLocalPort());
+		return "Running server on: %s:%d".formatted(PAJC.getLocalAddress(), server.getLocalPort());
 	}
 	
 	private String createJSONMessage() {
 		return JSON_MESSAGE.formatted(model.right.toJSON(), model.left.toJSON());
 	}
-		
+	
 }

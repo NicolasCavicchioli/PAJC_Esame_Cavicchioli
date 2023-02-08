@@ -7,6 +7,9 @@ import java.awt.GridBagConstraints;
 import javax.swing.JPanel;
 import tetris.single.TetrisModel;
 
+/**
+ * Panel to display a {@link TetrisModel} by having a direct reference.
+ */
 @SuppressWarnings("serial")
 public class BoardPanel extends JPanel {
 	

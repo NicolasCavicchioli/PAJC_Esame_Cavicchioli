@@ -66,6 +66,9 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		current.show(g);
 	}
 	
+	/**
+	 * Set each Tetris block to a fized size of 32x32.
+	 */
 	public static void scale(Graphics2D g) {
 		g.scale(32, 32);
 	}
@@ -116,7 +119,17 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 		return !checkIfPieceFit(0, 0, 0)
 			|| current.anyBlock((int x, int y)->y<2);
 	}
-
+	
+	/**
+	 * Try to fit a rotate version of the current {@code Piece}.
+	 * 
+	 * <p>This is the method that allow special moves, such as T-Spin.
+	 * 
+	 * @param dr whether the current {@code Piece} is wished to be rotated
+	 *        counter-clockwise or clockwise
+	 * @return if the current {@code Piece} can in any way
+	 *         be rotated in the specified direction
+	 */
 	private boolean tryRotate(int dr) {
 		return applyIfPieceFit(  0, 0, dr)
 			|| applyIfPieceFit(  0, 1, dr)// I
@@ -156,6 +169,10 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	}
 	
 	
+	/**
+	 * Set the current {@code Piece} vertical position
+	 * to the lowest possible, as shown by the "ghost".
+	 */
 	private void hardDrop() {
 		if (isRunning() && current.y<ghostY) timer.restart();
 		current.y = ghostY;
@@ -214,6 +231,12 @@ public final class TetrisModel implements IModel, IHasEvents<TetrisEvent> {
 	}
 	
 	
+	/**
+	 * Return whether any column verify the specified predicate. 
+	 * 
+	 * @param test the predicate to be tested
+	 * @return whether any column verify the specified predicate
+	 */
 	private boolean anyColumn(IntPredicate test) {
 		for (int x=0; x<mapWidth; ++x) {
 			if (test.test(x)) return true;

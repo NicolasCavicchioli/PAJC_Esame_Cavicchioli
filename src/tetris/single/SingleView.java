@@ -7,6 +7,12 @@ import javax.swing.JFrame;
 import pajc.event.KeyListener;
 import tetris.panel.TetrisPanel;
 
+/**
+ * View of the Simple player mode.
+ *
+ * @see TetrisModel
+ * @see Controller
+ */
 public class SingleView {
 	
 	public static void apply(JFrame frame) {

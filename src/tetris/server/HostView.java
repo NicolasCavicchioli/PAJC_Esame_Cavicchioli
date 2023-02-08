@@ -14,14 +14,18 @@ import pajc.event.KeyListener;
 import tetris.panel.TetrisPanel;
 import tetris.share.BiModel;
 
+/**
+ * Server-side of the Multiplayer view.
+ * 
+ * @see BiModel
+ * @see ServerController
+ */
 public class HostView {
 	
 	TetrisPanel tetrisPanel1, tetrisPanel2;
 	JLabel address_lbl;
 	
 	public void apply(JFrame frame) {
-		var model = new BiModel();
-		
 		frame.getContentPane().removeAll();
 		frame.setTitle("Tetris 2 (server)");
 		frame.setLayout(new BorderLayout());
@@ -51,11 +55,13 @@ public class HostView {
 		
 		
 		tetrisPanel2 = new TetrisPanel();
+		tetrisPanel2.info_pnl.setLabelText("waiting player 2");
 		mainPanel.add(tetrisPanel2, new pajc.swing.GridBagConstraints()
 				.setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH)
 				.setGrid(2, 0));
 		
+		var model = new BiModel();
 		var controller = new ServerController(model, this);
 		
 		
@@ -63,14 +69,12 @@ public class HostView {
 			controller.host_want_to_play_again();
 		});
 		
-		tetrisPanel2.info_pnl.setLabelText("waiting player 2");
-		
 		
 		frame.requestFocus();
 		frame.setFocusable(true);
 		frame.addKeyListener(KeyListener.whenKeyPressed(controller::hostKeyPressed));
 		
-		ResizeTransitionTo(new Dimension(32*30, 32*22), frame, ()->{});
+		ResizeTransitionTo(new Dimension(32*32, 32*22), frame, ()->{});
 	}
 	
 }

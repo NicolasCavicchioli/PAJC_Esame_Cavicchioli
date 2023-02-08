@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import tetris.single.TetrisModel;
 
 /**
- * The main Panel to display the game, one per {@link TetrisModel}.
+ * The main Panel to display a single {@link TetrisModel}.
  * It contains by default a {@link NextPiecePanel} and an {@link InfoPanel},
  * and it will contain either a {@link BoardPanel} or a {@link ClientPanel} as needed.
  * 

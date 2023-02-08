@@ -5,6 +5,12 @@ import tetris.TetrisEvent;
 import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 
+/**
+ * Controller for the Single player mode.
+ * 
+ * @see TetrisModel
+ * @see SingleView
+ */
 public class Controller implements IController {
 	
 	TetrisModel model;

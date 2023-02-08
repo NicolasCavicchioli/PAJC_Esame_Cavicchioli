@@ -1,9 +1,7 @@
 package tetris;
 
 import java.awt.Graphics2D;
-
 import javax.swing.JPanel;
-
 import tetris.single.TetrisModel;
 
 /**

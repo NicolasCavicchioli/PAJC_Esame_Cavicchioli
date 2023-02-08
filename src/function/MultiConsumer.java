@@ -3,7 +3,6 @@ package function;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
-
 import pajc.event.IEvent;
 import pajc.event.IHasEvents;
 import pajc.event.MyEventHandler;

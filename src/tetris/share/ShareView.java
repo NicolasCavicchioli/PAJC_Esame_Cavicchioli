@@ -6,6 +6,12 @@ import javax.swing.JFrame;
 import pajc.event.KeyListener;
 import tetris.panel.TetrisPanel;
 
+/**
+ * View of the share-screen mode
+ * 
+ * @see BiModel
+ * @See ShareController
+ */
 public class ShareView {
 	
 	public static void apply(JFrame frame) {
@@ -17,9 +23,6 @@ public class ShareView {
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
-		
-		
-		var model = new BiModel();
 		
 		
 		var tetrisPanel1 = new TetrisPanel();
@@ -35,6 +38,7 @@ public class ShareView {
 				.setFill(GridBagConstraints.BOTH)
 				.setGrid(2, 0));
 		
+		var model = new BiModel();
 		var controller = new ShareController(frame, model, tetrisPanel1, tetrisPanel2);
 		
 		tetrisPanel1.info_pnl.button.addActionListener(e -> {

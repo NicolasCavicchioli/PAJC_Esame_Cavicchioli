@@ -8,6 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * Panel with a Label and a Button.
+ */
 @SuppressWarnings("serial")
 public class InfoPanel extends JPanel {
 	public static final GridBagConstraints constraints;

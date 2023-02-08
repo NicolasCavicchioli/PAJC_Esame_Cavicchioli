@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
+import java.net.Socket;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -16,9 +18,19 @@ import tetris.panel.ClientPanel;
 import tetris.panel.TetrisPanel;
 import static pajc.PAJC.ResizeTransitionTo;
 
+/**
+ * Client-side of the Multiplayer view.
+ * 
+ * @see ClientPanel
+ * @see ServerController
+ */
 public class JoinView {
 	private static final String IP_PORT_REGEX = "^(?:localhost|(?:\\d{1,3}.){3}\\d{1,3}):[1-6]\\d{0,4}$";
 	
+	/**
+	 * Verify if is possible a {@link Socket} connection to the specified
+	 * address and if so, apply the layout.
+	 */
 	public static void tryApply(JFrame frame, String ip, JLabel error_lbl) {
 		if (ip.matches(IP_PORT_REGEX) == false) {
 			error_lbl.setText("invalid ip format");
@@ -57,7 +69,7 @@ public class JoinView {
 		socket.connectTo(host, port);
 		
 	}
-
+	
 	private static void apply(JFrame frame, MySocket socket) {
 		frame.getContentPane().removeAll();
 		frame.setTitle("Tetris 2 (client)");
@@ -144,7 +156,7 @@ public class JoinView {
 		
 		socket.when(SocketEvent.COMMAND_IN, (String command) -> {
 			if (command.equals(ServerController.PLAY_AGAIN_COMMAND)) {
-				tetrisPanel2.info_pnl.setLabelText("Player want to\nplay again");
+				tetrisPanel2.info_pnl.setLabelText("player is ready");
 				tetrisPanel2.repaint();
 			}
 		});

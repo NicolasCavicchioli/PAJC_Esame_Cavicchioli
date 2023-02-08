@@ -1,14 +1,15 @@
 package tetris;
 
 import java.util.function.IntConsumer;
-
 import function.StringConsumer;
 import pajc.event.IEvent;
 import tetris.single.TetrisModel;
 
 /**
  * enum with all the {@link IEvent} related to the game Tetris
- * that the {@link TetrisModel} can trigger.
+ * that {@link TetrisModel} can trigger.
+ * 
+ * @see IEvent
  */
 public enum TetrisEvent implements IEvent {
 	COUNTDOWN   (IntConsumer.class),

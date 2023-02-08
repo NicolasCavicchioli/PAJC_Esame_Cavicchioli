@@ -39,6 +39,8 @@ public class TELNET {
 			 W or SPACE = hard drop
 			 Q = rotate counter-clockwise
 			 E = rotate clockwise
+			 
+			Remember that for send an action you have to press ENTER
 			
 			Enter any key to start
 			"""

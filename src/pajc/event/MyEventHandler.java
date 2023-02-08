@@ -7,6 +7,11 @@ import java.util.HashMap;
 import function.MultiConsumer;
 import pajc.PAJC;
 
+/**
+ * Single class that handle a specified type of {@link IEvent}.
+ * 
+ * @param <Event> the type of {@link IEvent} that this class will handle
+ */
 public class MyEventHandler<Event extends IEvent> {	
 	
 	HashMap<Event,ArrayList<MultiConsumer>> map = new HashMap<>();

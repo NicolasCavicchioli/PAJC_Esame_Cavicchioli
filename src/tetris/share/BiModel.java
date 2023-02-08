@@ -6,6 +6,9 @@ import tetris.IModel;
 import tetris.TetrisEvent;
 import tetris.single.TetrisModel;
 
+/**
+ * Class that handle two {@link TetrisModel} at the same time.
+ */
 public class BiModel implements IModel, IHasEvents<TetrisEvent> {
 	
 	final MyEventHandler<TetrisEvent> events = new MyEventHandler<>();

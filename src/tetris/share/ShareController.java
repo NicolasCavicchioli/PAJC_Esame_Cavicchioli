@@ -2,12 +2,9 @@ package tetris.share;
 
 import static pajc.PAJC.ResizeTransitionTo;
 import static pajc.PAJC.startCoundDown;
-
 import java.awt.Dimension;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.JFrame;
-
 import tetris.IController;
 import tetris.TetrisEvent;
 import tetris.Tetromino;
@@ -15,6 +12,12 @@ import tetris.panel.BoardPanel;
 import tetris.panel.TetrisPanel;
 import tetris.single.TetrisModel;
 
+/**
+ * Controller for the Share-screen mode.
+ * 
+ * @see BiModel
+ * @see ShareView
+ */
 public class ShareController implements IController {
 	private static final String LEFT_KEYS="ASDQWE", RIGHT_KEYS="JKLUIO";
 	private BiModel model;
